@@ -1,14 +1,16 @@
-import typing
+import tkinter.messagebox
 from tkinter import *
 from tkinter import messagebox
 
+import tendo
+from tendo import singleton
 root = Tk()
+
 root.title('dictionary v.1.0')
 root.geometry('800x600')
+
 root.columnconfigure(9)
 root.rowconfigure(9)
-
-
 
 
 def on_closing():
@@ -26,7 +28,11 @@ def on_closing():
     b2 = Button(toplevel, text="Нет", command=toplevel.destroy, width=10)
     b2.grid(row=1, column=2, padx=(2, 35), sticky="e")
 
+    toplevel.grab_set()
+
 root.protocol('WM_DELETE_WINDOW',on_closing)
+
+
 
 
 lbl_input=Label(root,text="введите слово для поиска:",font=('muller',12))
@@ -44,5 +50,17 @@ text_box_output.config(font=('muller',20,'bold'),state='disabled')
 btn = Button(root, text="поиск")
 btn.place(x=400,y=80)
 
+try:
+    me = singleton.SingleInstance()
+except tendo.singleton.SingleInstanceException:
+    dont = Tk()
+    dont.title("Say Hello")
+    labl =Label(dont, text="Hello World")
+    labl.pack(side="top", fill="both", expand=True, padx=20, pady=20)
+    button = Button(root, text="OK", command=lambda: dont.destroy())
+    button.pack(side="bottom", fill="none", expand=True)
+    dont.mainloop()
 
-root.mainloop()
+else:
+    root.mainloop()
+
