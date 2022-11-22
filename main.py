@@ -12,8 +12,11 @@ root.title('dictionary v.1.0')
 root.geometry('800x600')
 root.columnconfigure(9)
 root.rowconfigure(9)
-f=open('run.dll','w+')
-f.close()
+if os.path.exists('run.dll'):
+    root.destroy()
+else:
+    f=open('run.dll','w+')
+    f.close()
 def delet_file():
     if os.path.exists('run.dll'):
         print('yes')
