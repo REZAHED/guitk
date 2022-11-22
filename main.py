@@ -1,14 +1,15 @@
+import os
+import sys
 import tkinter.messagebox
 from tkinter import *
 from tkinter import messagebox
 
+import psutil as psutil
 import tendo
 from tendo import singleton
 root = Tk()
-
 root.title('dictionary v.1.0')
 root.geometry('800x600')
-
 root.columnconfigure(9)
 root.rowconfigure(9)
 
@@ -50,17 +51,42 @@ text_box_output.config(font=('muller',20,'bold'),state='disabled')
 btn = Button(root, text="поиск")
 btn.place(x=400,y=80)
 
-try:
-    me = singleton.SingleInstance()
-except tendo.singleton.SingleInstanceException:
-    dont = Tk()
-    dont.title("Say Hello")
-    labl =Label(dont, text="Hello World")
-    labl.pack(side="top", fill="both", expand=True, padx=20, pady=20)
-    button = Button(root, text="OK", command=lambda: dont.destroy())
-    button.pack(side="bottom", fill="none", expand=True)
-    dont.mainloop()
+procs = [p for p in psutil.process_iter() if 'main.exe' in p.name()]
 
+if len(procs) > 2:
+    root.withdraw()
+    messagebox.showerror("ошибка",'у вас уже открыто приложение!')
+
+    root.destroy()
 else:
     root.mainloop()
+
+# try:
+#     me = singleton.SingleInstance()
+# except tendo.singleton.SingleInstanceException:
+#
+#
+#
+#        root.withdraw()
+#        messagebox.showerror("ошибка",'у вас уже открыто приложение!')
+#
+#     # t = Toplevel(root)
+#     # t.title("закрыть программу")
+#     # t.geometry(f"300x100+{root.winfo_x() + 250}+{root.winfo_y() + 200}")
+#     #
+#     # l1 = Label(t, image="::tk::icons::warning")
+#     # l1.grid(row=0, column=0, pady=(0, 7), padx=(10, 30), sticky="e")
+#     # l2 = Label(t, text="У вас уже открыто приложение")
+#     # l2.grid(row=0, column=1, columnspan=3, pady=(7, 10), sticky="w")
+#     # b1 = Button(t, text="Да", command=lambda :[root.destroy(),t.destroy()],  width=10)
+#     # b1.grid(row=1, column=1, padx=(2, 35), sticky="e")
+#
+#        root.destroy()
+
+
+
+
+
+# else:
+
 
