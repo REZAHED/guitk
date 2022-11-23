@@ -29,8 +29,14 @@ import openfile
 root = Tk()
 root.title('dictionary v.1.0')
 root.geometry('800x600')
-root.columnconfigure(9)
-root.rowconfigure(9)
+
+root.columnconfigure(0,weight=3)
+root.columnconfigure(1,weight=1)
+
+
+root.rowconfigure(1,weight=1)
+root.rowconfigure(3,weight=1)
+
 
 
 def logging(text):
@@ -123,15 +129,15 @@ else:
     root.protocol('WM_DELETE_WINDOW', on_closing)
 
     lbl_input = Label(root, text="введите слово для поиска:", font=('muller', 12))
-    lbl_input.place(x=10, y=4)
+    lbl_input.grid(column=1,row=0)
     text_box_input = Text(root, width=25, height=1, selectbackground="blue", borderwidth=2)
-    text_box_input.grid(row=2, column=2)
-    text_box_input.config(font=('muller', 20, 'bold'),pady=100)
+    text_box_input.grid(row=1, column=0,pady=30,padx=20)
+    text_box_input.config(font=('muller', 20, 'bold'))
 
     lbl_output = Label(root, text="перевод:", font=('muller', 12))
-    lbl_output.place(x=10, y=80)
+    lbl_output.grid(column=0,row=2,)
     text_box_output = Text(root, width=25, height=1, selectbackground="blue", borderwidth=2)
-    text_box_output.grid(row=5, column=2)
+    text_box_output.grid(row=3, column=0,pady=10,padx=20)
     text_box_output.config(font=('muller', 20, 'bold'),state='disabled')
 
     btn = Button(root, text="    поиск    ",command=search)
@@ -156,10 +162,10 @@ else:
     tree.heading('Перевод', text='Перевод')
     tree.bind('<<TreeviewSelect>>', item_selected)
 
-    tree.grid(row=10, column=2, sticky='nsew')
+    tree.grid(row=4, column=0, sticky='nsew',padx=20,columnspan=2)
     scrollbar = ttk.Scrollbar(root, orient=VERTICAL, command=tree.yview)
     tree.configure(yscroll=scrollbar.set)
-    scrollbar.grid(row=10, column=3, sticky='ns')
+    scrollbar.grid(row=4, column=2, sticky='ns')
     # procs = [p for p in psutil.process_iter() if 'main.exe' in p.name()]
     #
     # if len(procs) > 2:
