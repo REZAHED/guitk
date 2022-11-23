@@ -9,7 +9,9 @@ import os
 # os.environ["PAPERLESS_AVX2_AVAILABLE"]="True"
 # os.environ["OCR_THREADS"] = '4'
 from tkinter import *
-from tkinter import messagebox
+from tkinter import messagebox, ttk
+from tkinter.messagebox import showinfo
+
 # if hasattr(sys, "set_int_max_str_digits"):
 #     sys.set_int_max_str_digits(1001000)
 #
@@ -19,6 +21,7 @@ from tkinter import messagebox
 import psutil as psutil
 import tendo
 from tendo import singleton
+from tqdm import tk
 
 import openfile
 
@@ -72,19 +75,32 @@ else:
             print('yes')
             f.close()
             os.remove('run.dll')
-
+#######################################################
+    ########################################################
     def search():
+        text_box_output.config(state='normal')
         text = text_box_input.get(0.0,END).strip().lower()
-        print(text)
         read = openfile.OpenFile()
         dic_ = read.opening_json('dictionary.json')
-        print(dic_)
         if dic_ is not None and text in dic_.keys():
-            print('laaaaa')
-            print(dic_[text])
+
             text_box_output.delete('1.0', END)
             text_box_output.insert('0.0',dic_[text])
+            text_box_output.config(state='disabled')
+        elif dic_ is not None and text in dic_.values():
+            reverse_dic= {v: k for k, v in dic_.items()}
+            text_box_output.delete('1.0', END)
+            text_box_output.insert('0.0', reverse_dic[text])
+        else:
+            text_box_output.delete('1.0', END)
+            text_box_output.insert('0.0', 'такого слово не найдено')
+            text_box_output.config(state='disabled')
 
+
+
+
+    #######################################################
+    ########################################################
     def on_closing():
         toplevel = Toplevel(root)
 
@@ -109,19 +125,41 @@ else:
     lbl_input = Label(root, text="введите слово для поиска:", font=('muller', 12))
     lbl_input.place(x=10, y=4)
     text_box_input = Text(root, width=25, height=1, selectbackground="blue", borderwidth=2)
-    text_box_input.place(x=10, y=35)
-    text_box_input.config(font=('muller', 20, 'bold'))
+    text_box_input.grid(row=2, column=2)
+    text_box_input.config(font=('muller', 20, 'bold'),pady=100)
 
     lbl_output = Label(root, text="перевод:", font=('muller', 12))
     lbl_output.place(x=10, y=80)
     text_box_output = Text(root, width=25, height=1, selectbackground="blue", borderwidth=2)
-    text_box_output.place(x=10, y=120)
-    text_box_output.config(font=('muller', 20, 'bold'))
+    text_box_output.grid(row=5, column=2)
+    text_box_output.config(font=('muller', 20, 'bold'),state='disabled')
 
-    btn = Button(root, text="поиск",command=search)
-    btn.place(x=400, y=80)
+    btn = Button(root, text="    поиск    ",command=search)
+    btn.place(x=450, y=90)
 
+    btn_save = Button(root, text="сохранить", command=search)
+    btn_save.place(x=450, y=50)
 
+    #######################################################
+    ########################################################
+    def item_selected(event):
+        for selected_item in tree.selection():
+            item = tree.item(selected_item)
+            record = item['values']
+            # show a message
+            showinfo(title='Information', message=','.join(record))
+    columns = ('Слово', 'Перевод')
+    tree = ttk.Treeview(root, columns=columns, show='headings')
+
+    # define headings
+    tree.heading('Слово', text='Слово')
+    tree.heading('Перевод', text='Перевод')
+    tree.bind('<<TreeviewSelect>>', item_selected)
+
+    tree.grid(row=10, column=2, sticky='nsew')
+    scrollbar = ttk.Scrollbar(root, orient=VERTICAL, command=tree.yview)
+    tree.configure(yscroll=scrollbar.set)
+    scrollbar.grid(row=10, column=3, sticky='ns')
     # procs = [p for p in psutil.process_iter() if 'main.exe' in p.name()]
     #
     # if len(procs) > 2:
