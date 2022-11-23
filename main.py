@@ -7,6 +7,7 @@ from tkinter import messagebox
 import psutil as psutil
 import tendo
 from tendo import singleton
+os.environ["MKL_NUM_THREADS"] = "1"
 root = Tk()
 root.title('dictionary v.1.0')
 root.geometry('800x600')
