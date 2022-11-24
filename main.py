@@ -24,35 +24,33 @@ from tendo import singleton
 from tqdm import tk
 
 import openfile
+import write_to_file
 
 # os.environ["MKL_NUM_THREADS"] = "1"
 root = Tk()
 root.title('dictionary v.1.0')
-root.resizable(False,False)
+root.resizable(False, False)
 root.geometry('800x600')
 
+root.columnconfigure(0, weight=2)
+root.columnconfigure(1, weight=1)
+root.columnconfigure(2, weight=1)
+root.columnconfigure(3, weight=1)
+root.columnconfigure(4, weight=1)
 
-root.columnconfigure(0,weight=2)
-root.columnconfigure(1,weight=1)
-root.columnconfigure(2,weight=1)
-root.columnconfigure(3,weight=1)
-root.columnconfigure(4,weight=1)
-
-root.rowconfigure(1,weight=1)
-root.rowconfigure(2,weight=1)
-root.rowconfigure(3,weight=1)
-root.rowconfigure(4,weight=1)
-root.rowconfigure(5,weight=4)
-root.rowconfigure(6,weight=1)
+root.rowconfigure(1, weight=1)
+root.rowconfigure(2, weight=1)
+root.rowconfigure(3, weight=1)
+root.rowconfigure(4, weight=1)
+root.rowconfigure(5, weight=4)
+root.rowconfigure(6, weight=1)
 
 
 def logging(text):
-
     current = time.strftime("%Y-%m-%d %H:%M:%S")
     log = open('log.txt', 'a+')
     log.write(str('>>>') + ' - ' + text + " " + current + '\n')
     log.close()
-
 
 
 if not os.path.exists('log.txt'):
@@ -85,23 +83,36 @@ else:
 
     def delet_file():
         if os.path.exists('run.dll'):
-            print('yes')
+
             f.close()
             os.remove('run.dll')
-#######################################################
+
+
+
+
+    def insert_table(text, translate):
+        contacts = []
+
+        contacts.append((text,translate))
+
+
+        # add data to the treeview
+        for contact in contacts:
+            tree.insert('', END, values=contact)
+    #######################################################
     ########################################################
     def search():
         text_box_output.config(state='normal')
-        text = text_box_input.get(0.0,END).strip().lower()
+        text = text_box_input.get(0.0, END).strip().lower()
         read = openfile.OpenFile()
         dic_ = read.opening_json('dictionary.json')
         if dic_ is not None and text in dic_.keys():
 
             text_box_output.delete('1.0', END)
-            text_box_output.insert('0.0',dic_[text])
+            text_box_output.insert('0.0', dic_[text])
             text_box_output.config(state='disabled')
         elif dic_ is not None and text in dic_.values():
-            reverse_dic= {v: k for k, v in dic_.items()}
+            reverse_dic = {v: k for k, v in dic_.items()}
             text_box_output.delete('1.0', END)
             text_box_output.insert('0.0', reverse_dic[text])
         else:
@@ -110,6 +121,12 @@ else:
             text_box_output.config(state='disabled')
 
 
+    def save():
+        text = text_box_input.get(0.0, END).strip().lower()
+        translate = text_box_output.get(0.0, END).strip().lower()
+        write = write_to_file.Write_To_File()
+        write_to_file.Write_To_File.dic_to_file(write, text, translate)
+        insert_table(text,translate)
 
 
     #######################################################
@@ -136,40 +153,44 @@ else:
     root.protocol('WM_DELETE_WINDOW', on_closing)
 
     lbl_input = Label(root, text="введите слово для поиска:", font=('muller', 12))
-    lbl_input.grid(column=0,row=0,sticky='w',padx=20,pady=5)
+    lbl_input.grid(column=0, row=0, sticky='w', padx=20, pady=5)
     text_box_input = Text(root, width=25, height=1, selectbackground="blue", borderwidth=2)
-    text_box_input.grid(row=1, column=0,sticky='w',padx=20)
+    text_box_input.grid(row=1, column=0, sticky='w', padx=20)
     text_box_input.config(font=('muller', 20, 'bold'))
 
     lbl_output = Label(root, text="перевод:", font=('muller', 12))
-    lbl_output.grid(column=0,row=2,sticky='w',padx=20)
+    lbl_output.grid(column=0, row=2, sticky='w', padx=20)
     text_box_output = Text(root, width=25, height=1, selectbackground="blue", borderwidth=2)
-    text_box_output.grid(row=3, column=0,sticky='w',padx=20)
-    text_box_output.config(font=('muller', 20, 'bold'),state='disabled')
+    text_box_output.grid(row=3, column=0, sticky='w', padx=20)
+    text_box_output.config(font=('muller', 20, 'bold'), state='normal')
 
-    btn = Button(root, text="    поиск    ",command=search)
-    btn.grid(column=0,row=2, sticky='e')
+    btn = Button(root, text="    поиск    ", command=search)
+    btn.grid(column=0, row=2, sticky='e')
 
-    btn_save = Button(root, text="сохранить", command=search)
-    btn_save.grid(column=0,row=1, sticky='e')
+    btn_save = Button(root, text="сохранить", command=save)
+    btn_save.grid(column=0, row=1, sticky='e')
 
     #######################################################
     ########################################################
+    columns = ('Слово', 'Перевод')
+    tree = ttk.Treeview(root, columns=columns, show='headings')
+    tree.heading('Слово', text='Слово')
+    tree.heading('Перевод', text='Перевод')
+
+
     def item_selected(event):
         for selected_item in tree.selection():
             item = tree.item(selected_item)
             record = item['values']
             # show a message
             showinfo(title='Information', message=','.join(record))
-    columns = ('Слово', 'Перевод')
-    tree = ttk.Treeview(root, columns=columns, show='headings')
 
-    # define headings
-    tree.heading('Слово', text='Слово')
-    tree.heading('Перевод', text='Перевод')
+
     tree.bind('<<TreeviewSelect>>', item_selected)
 
-    tree.grid(row=5, column=0, sticky='nsew',padx=20,columnspan=5)
+    # define headings
+
+    tree.grid(row=5, column=0, sticky='nsew', padx=20, columnspan=5)
     scrollbar = ttk.Scrollbar(root, orient=VERTICAL, command=tree.yview)
     tree.configure(yscroll=scrollbar.set)
     scrollbar.grid(row=5, column=5, sticky='ns')
