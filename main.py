@@ -52,7 +52,9 @@ def logging(text):
     log.write(str('>>>') + ' - ' + text + " " + current + '\n')
     log.close()
 
-
+if not os.path.exists('dictionary.json'):
+    log = open('log.txt', 'w+')
+    log.close()
 if not os.path.exists('log.txt'):
     log = open('log.txt', 'w+')
     log.close()
@@ -96,10 +98,17 @@ else:
 
         contacts.append((c,text,translate))
 
-
+        d=1
         # add data to the treeview
         for contact in contacts:
-            tree.insert('', END, values=contact)
+            if not d % 2:
+                tree.insert('', END, values=contact, tags=('oddrow'))
+                d += 1
+            else:
+                tree.insert('', END, values=contact, tags=('evenrow'))
+                d += 1
+            tree.tag_configure('oddrow', background='lightgray')
+            tree.tag_configure('evenrow', background='white')
     #######################################################
     ########################################################
     def search():
@@ -189,23 +198,37 @@ else:
 
 
     tree.bind('<<TreeviewSelect>>', item_selected)
+
+
     read = openfile.OpenFile()
     dic_ = read.opening_json('dictionary.json')
-    contacts = []
-    c = 1
-    for i , j in dic_.items():
+    if dic_ is not None:
 
-        contacts.append((c,i, j))
-        c+=1
-    # add data to the treeview
-    for contact in contacts:
-        tree.insert('', END, values=contact)
+        contacts = []
+        c = 1
+        for i , j in dic_.items():
+
+            contacts.append((c,i, j))
+            c+=1
+        # add data to the treeview
+        d=1
+        for contact in contacts:
+            if not d%2:
+                tree.insert('', END, values=contact ,tags = ('oddrow'))
+                d +=1
+            else:
+                tree.insert('', END, values=contact, tags=('evenrow'))
+                d+=1
+            tree.tag_configure('oddrow', background='lightgray')
+            tree.tag_configure('evenrow', background='white')
     # define headings
 
     tree.grid(row=5, column=0, sticky='nsew', padx=20, columnspan=5)
     scrollbar = ttk.Scrollbar(root, orient=VERTICAL, command=tree.yview)
     tree.configure(yscroll=scrollbar.set)
     scrollbar.grid(row=5, column=5, sticky='ns')
+
+
     # procs = [p for p in psutil.process_iter() if 'main.exe' in p.name()]
     #
     # if len(procs) > 2:
