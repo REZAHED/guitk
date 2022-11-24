@@ -93,12 +93,14 @@ else:
 
 
     def insert_table(text, translate):
+        read = openfile.OpenFile()
+        dic_ = read.opening_json('dictionary.json')
         contacts = []
-        c=len(dic_) +1
+        c=len(dic_)
 
         contacts.append((c,text,translate))
 
-        d=1
+        d=c
         # add data to the treeview
         for contact in contacts:
             if not d % 2:
