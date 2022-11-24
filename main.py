@@ -92,8 +92,9 @@ else:
 
     def insert_table(text, translate):
         contacts = []
+        c=len(dic_) +1
 
-        contacts.append((text,translate))
+        contacts.append((c,text,translate))
 
 
         # add data to the treeview
@@ -172,10 +173,11 @@ else:
 
     #######################################################
     ########################################################
-    columns = ('Слово', 'Перевод')
+    columns = ('№','Слово', 'Перевод')
     tree = ttk.Treeview(root, columns=columns, show='headings')
     tree.heading('Слово', text='Слово')
     tree.heading('Перевод', text='Перевод')
+    tree.heading('№', text='№')
 
 
     def item_selected(event):
@@ -187,7 +189,17 @@ else:
 
 
     tree.bind('<<TreeviewSelect>>', item_selected)
+    read = openfile.OpenFile()
+    dic_ = read.opening_json('dictionary.json')
+    contacts = []
+    c = 1
+    for i , j in dic_.items():
 
+        contacts.append((c,i, j))
+        c+=1
+    # add data to the treeview
+    for contact in contacts:
+        tree.insert('', END, values=contact)
     # define headings
 
     tree.grid(row=5, column=0, sticky='nsew', padx=20, columnspan=5)
