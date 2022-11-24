@@ -196,7 +196,7 @@ else:
             item = tree.item(selected_item)
             record = item['values']
             # show a message
-            showinfo(title='Information', message=','.join(record))
+            showinfo(title='Information', message='-->'.join(record[1:3]))
 
 
     tree.bind('<<TreeviewSelect>>', item_selected)
