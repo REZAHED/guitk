@@ -150,19 +150,34 @@ else:
     tree.heading('Перевод', text='Перевод')
     tree.heading('№', text='№')
     tree.column("# 1", anchor=CENTER, stretch=NO, width=50)
-    def item_selected():
+
+    btn_delete = Button(root, text="  удалить  ",  bg='red', fg='white')
+    btn_delete.grid(column=0, row=6, sticky='w', padx=20)
+
+    def item_selected(event,arg=""):
+        print(arg)
+        print(arg)
+        print(event)
+        btn_delete.config(state='normal')
         for selected_item in tree.selection():
             item = tree.item(selected_item)
             record = item['values']
-            print(record)
-            read = openfile.OpenFile()
-            dic_ = read.opening_json('dictionary.json')
-            del dic_[record[1]]
-            with open('dictionary.json', 'w+', encoding='utf-8-sig') as file:
-                json.dump(dic_, file, indent=2, ensure_ascii=False)
+            print(type(arg))
+            if arg.strip() =='2':
+                print("yesss")
+                read = openfile.OpenFile()
+                dic_ = read.opening_json('dictionary.json')
+                del dic_[record[1]]
+                with open('dictionary.json', 'w+', encoding='utf-8-sig') as file:
+                    json.dump(dic_, file, indent=2, ensure_ascii=False)
+
+            btn_delete.config(state='normal')
             insert_table()
             # showinfo(title='Information', message='-->'.join(record[1:3]))
 
+
+    btn_delete.config(state='normal', command=lambda :[item_selected('<<TreeviewSelect>>','2')])
+    tree.bind('<<TreeviewSelect>>', item_selected)
 
     def save():
         text = text_box_input.get(0.0, END).strip().lower()
@@ -211,10 +226,9 @@ else:
     btn = Button(root, text="    поиск    ", command=search)
     btn.grid(column=0, row=2, sticky='e')
 
-    btn_save = Button(root, text="сохранить", command=save)
+    btn_save = Button(root, text="сохранить", command=save,bg='green',fg='white')
     btn_save.grid(column=0, row=1, sticky='e')
-    btn_delete = Button(root, text="удалить",command=item_selected)
-    btn_delete.grid(column=0, row=3, sticky='e')
+
     #######################################################
     ########################################################
 
