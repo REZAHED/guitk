@@ -28,9 +28,9 @@ class Write_To_File:
             dic_en_rus.update({word: translate})
         else:
             dic_en_rus = {word: translate}
-        with open('dictionary.json', 'r+', encoding='utf-8-sig') as file:
+        with open('dictionary.json', 'w+', encoding='utf-8-sig') as file:
             json.dump(dic_en_rus, file, indent=2, ensure_ascii=False)
-            os.system('cls')
+
         return  f'Слово {word.upper()} и его значение\n {translate.upper()} успешно сохранены.'
 
     #########################################################

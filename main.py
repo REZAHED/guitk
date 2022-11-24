@@ -1,4 +1,5 @@
 import sys
+import json
 import time
 import os
 # os.environ["OMP_NUM_THREADS"]= '4'
@@ -92,23 +93,33 @@ else:
 
 
 
-    def insert_table(text, translate):
+    def insert_table(text="", translate=""):
+
         read = openfile.OpenFile()
         dic_ = read.opening_json('dictionary.json')
+
+
+
         contacts = []
-        c=len(dic_)
+        c=1
 
-        contacts.append((c,text,translate))
-
+        for i,j in dic_.items():
+            contacts.append((c,i,j))
+            c+=1
         d=c
-        # add data to the treeview
+
+        for i in tree.get_children():
+            tree.delete(i)
+
         for contact in contacts:
             if not d % 2:
                 tree.insert('', END, values=contact, tags=('oddrow'))
+
                 d += 1
             else:
                 tree.insert('', END, values=contact, tags=('evenrow'))
                 d += 1
+
             tree.tag_configure('oddrow', background='lightgray')
             tree.tag_configure('evenrow', background='white')
     #######################################################
@@ -133,12 +144,33 @@ else:
             text_box_output.config(state='disabled')
 
 
+    columns = ('№', 'Слово', 'Перевод')
+    tree = ttk.Treeview(root, columns=columns, show='headings',height=2)
+    tree.heading('Слово', text='Слово')
+    tree.heading('Перевод', text='Перевод')
+    tree.heading('№', text='№')
+    tree.column("# 1", anchor=CENTER, stretch=NO, width=50)
+    def item_selected():
+        for selected_item in tree.selection():
+            item = tree.item(selected_item)
+            record = item['values']
+            print(record)
+            read = openfile.OpenFile()
+            dic_ = read.opening_json('dictionary.json')
+            del dic_[record[1]]
+            with open('dictionary.json', 'w+', encoding='utf-8-sig') as file:
+                json.dump(dic_, file, indent=2, ensure_ascii=False)
+            insert_table()
+            # showinfo(title='Information', message='-->'.join(record[1:3]))
+
+
     def save():
         text = text_box_input.get(0.0, END).strip().lower()
         translate = text_box_output.get(0.0, END).strip().lower()
         write = write_to_file.Write_To_File()
-        write_to_file.Write_To_File.dic_to_file(write, text, translate)
-        insert_table(text,translate)
+        if text.isalpha() and translate.isalpha():
+            write_to_file.Write_To_File.dic_to_file(write, text, translate)
+            insert_table(text,translate)
 
 
     #######################################################
@@ -181,29 +213,24 @@ else:
 
     btn_save = Button(root, text="сохранить", command=save)
     btn_save.grid(column=0, row=1, sticky='e')
-
+    btn_delete = Button(root, text="удалить",command=item_selected)
+    btn_delete.grid(column=0, row=3, sticky='e')
     #######################################################
     ########################################################
-    columns = ('№','Слово', 'Перевод')
-    tree = ttk.Treeview(root, columns=columns, show='headings')
-    tree.heading('Слово', text='Слово')
-    tree.heading('Перевод', text='Перевод')
-    tree.heading('№', text='№')
 
 
-    def item_selected(event):
-        for selected_item in tree.selection():
-            item = tree.item(selected_item)
-            record = item['values']
+
+
             # show a message
-            showinfo(title='Information', message='-->'.join(record[1:3]))
-
-
-    tree.bind('<<TreeviewSelect>>', item_selected)
+    #         showinfo(title='Information', message='-->'.join(record[1:3]))
+    #
+    #
+    # tree.bind('<<TreeviewSelect>>', item_selected)
 
 
     read = openfile.OpenFile()
     dic_ = read.opening_json('dictionary.json')
+
     if dic_ is not None:
 
         contacts = []
@@ -229,7 +256,7 @@ else:
     scrollbar = ttk.Scrollbar(root, orient=VERTICAL, command=tree.yview)
     tree.configure(yscroll=scrollbar.set)
     scrollbar.grid(row=5, column=5, sticky='ns')
-
+    tree.column(column=0,minwidth=50, stretch=False)
 
     # procs = [p for p in psutil.process_iter() if 'main.exe' in p.name()]
     #
