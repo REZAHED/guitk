@@ -66,8 +66,12 @@ def callback(event):
 
 def call(event):
     if type(event.widget) == tkinter.ttk.Treeview:
-        for item in tree.selection():
-            print(item)
+        for selected_item in tree.selection():
+            item = tree.item(selected_item)
+
+            record = item['values']
+            tree.clipboard_append(record[1])
+            tree.clipboard_append(record[2])
 
     print("clicked at right", event.x, event.y)
 
