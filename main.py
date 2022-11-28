@@ -11,7 +11,10 @@ import os
 # os.environ["OCR_THREADS"] = '4'
 from tkinter import *
 from tkinter import messagebox, ttk
+from ttkwidgets import CheckboxTreeview
 from tkinter.messagebox import showinfo
+from turtle import bgcolor
+
 
 # if hasattr(sys, "set_int_max_str_digits"):
 #     sys.set_int_max_str_digits(1001000)
@@ -30,8 +33,27 @@ import write_to_file
 # os.environ["MKL_NUM_THREADS"] = "1"
 root = Tk()
 root.title('dictionary v.1.0')
+def key(event):
+
+    print("pressed", repr(event.char))
+
+def callback(event):
+    item_selected('<<TreeviewSelect>>')
+
+    print("clicked at", event.x, event.y)
+
+def call(event):
+
+
+
+    print("clicked at right", event.x, event.y)
+
+root.bind("<Key>", key)
+root.bind("<Button-1>", callback)
+root.bind("<Button-3>", call)
 root.resizable(False, False)
 root.geometry('800x600')
+
 
 root.columnconfigure(0, weight=2)
 root.columnconfigure(1, weight=1)
@@ -122,6 +144,7 @@ else:
 
             tree.tag_configure('oddrow', background='lightgray')
             tree.tag_configure('evenrow', background='white')
+        return contacts
     #######################################################
     ########################################################
     def search():
@@ -144,12 +167,28 @@ else:
             text_box_output.config(state='disabled')
 
 
+
     columns = ('№', 'Слово', 'Перевод')
-    tree = ttk.Treeview(root, columns=columns, show='headings',height=2)
+    style = ttk.Style(root)
+
+    tree = ttk.Treeview(root, columns=columns, show='headings',height=2,)
+
+
+
+
+
+
+
+    style.configure("Treeview", font=('Calibri', 14),rowheight=25)
+    style.map('Treeview', background=[('selected', 'green')],
+              foreground=[('selected', 'white')])
+
     tree.heading('Слово', text='Слово')
     tree.heading('Перевод', text='Перевод')
     tree.heading('№', text='№')
-    tree.column("# 1", anchor=CENTER, stretch=NO, width=50)
+    tree.column("# 1", anchor=CENTER, stretch=NO, width=30)
+
+
 
     btn_delete = Button(root, text="  удалить  ",  bg='red', fg='white')
     btn_delete.grid(column=0, row=6, sticky='w', padx=20)
@@ -161,7 +200,9 @@ else:
 
         for selected_item in tree.selection():
 
-            item = tree.item(selected_item)
+
+
+            item = tree.item(selected_item,)
 
             record = item['values']
 
@@ -173,13 +214,15 @@ else:
                 with open('dictionary.json', 'w+', encoding='utf-8-sig') as file:
                     json.dump(dic_, file, indent=2, ensure_ascii=False)
                 insert_table()
+
             btn_delete.config(state='normal')
 
-
-
-
     btn_delete.config(state='disabled', command=lambda :[item_selected('<<TreeviewSelect>>',2)])
+
+
+    # tree.focus_set()
     tree.bind('<<TreeviewSelect>>', item_selected)
+
 
 
     def save():
@@ -265,9 +308,7 @@ else:
             else:
                 tree.insert('', END, values=contact, tags=('evenrow'))
                 d+=1
-            s = ttk.Style()
 
-            s.map("Custom.Treeview", background=[("selected", "green")])
             tree.tag_configure('oddrow', background='lightgray')
             tree.tag_configure('evenrow', background='white')
     # define headings
