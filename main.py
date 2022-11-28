@@ -154,30 +154,33 @@ else:
     btn_delete = Button(root, text="  удалить  ",  bg='red', fg='white')
     btn_delete.grid(column=0, row=6, sticky='w', padx=20)
 
-    def item_selected(event,arg=""):
-        print(arg)
-        print(arg)
-        print(event)
-        btn_delete.config(state='normal')
+
+
+    def item_selected(event,arg=0):
+        btn_delete.config(state='disabled')
+
         for selected_item in tree.selection():
+
             item = tree.item(selected_item)
+
             record = item['values']
-            print(type(arg))
-            if arg.strip() =='2':
-                print("yesss")
+
+            if arg ==2:
+
                 read = openfile.OpenFile()
                 dic_ = read.opening_json('dictionary.json')
                 del dic_[record[1]]
                 with open('dictionary.json', 'w+', encoding='utf-8-sig') as file:
                     json.dump(dic_, file, indent=2, ensure_ascii=False)
-
+                insert_table()
             btn_delete.config(state='normal')
-            insert_table()
-            # showinfo(title='Information', message='-->'.join(record[1:3]))
 
 
-    btn_delete.config(state='normal', command=lambda :[item_selected('<<TreeviewSelect>>','2')])
+
+
+    btn_delete.config(state='disabled', command=lambda :[item_selected('<<TreeviewSelect>>',2)])
     tree.bind('<<TreeviewSelect>>', item_selected)
+
 
     def save():
         text = text_box_input.get(0.0, END).strip().lower()
@@ -262,6 +265,9 @@ else:
             else:
                 tree.insert('', END, values=contact, tags=('evenrow'))
                 d+=1
+            s = ttk.Style()
+
+            s.map("Custom.Treeview", background=[("selected", "green")])
             tree.tag_configure('oddrow', background='lightgray')
             tree.tag_configure('evenrow', background='white')
     # define headings
