@@ -2,6 +2,7 @@ import sys
 import json
 import time
 import os
+import tkinter
 # os.environ["OMP_NUM_THREADS"]= '4'
 # os.environ["OMP_THREAD_LIMIT"] = '4'
 # os.environ["MKL_NUM_THREADS"] = '4'
@@ -33,20 +34,43 @@ import write_to_file
 # os.environ["MKL_NUM_THREADS"] = "1"
 root = Tk()
 root.title('dictionary v.1.0')
+ite = []
 def key(event):
-
+    if event.char =='п':
+        print('hello')
     print("pressed", repr(event.char))
 
 def callback(event):
+
     item_selected('<<TreeviewSelect>>')
+    # print(type(root.focus_get()))
+    # print(root.grab_set())
+    # print(tree.get_children())
+
+    # if type(root.focus_get())==tkinter.ttk.Treeview:
+    #     print('yes')
+    #     for item in tree.get_children():
+    #         tree.selection_remove(item)
+
+    if type(event.widget)!=tkinter.ttk.Treeview and type(event.widget)!= tkinter.Button :
+        for item in tree.get_children():
+             tree.selection_remove(item)
+
+    #
+    # if 800>event.x>0 and 295 >  event.y >100:
+    #
+
 
     print("clicked at", event.x, event.y)
 
+
 def call(event):
-
-
+    if type(event.widget) == tkinter.ttk.Treeview:
+        for item in tree.selection():
+            print(item)
 
     print("clicked at right", event.x, event.y)
+
 
 root.bind("<Key>", key)
 root.bind("<Button-1>", callback)
@@ -172,7 +196,7 @@ else:
     style = ttk.Style(root)
 
     tree = ttk.Treeview(root, columns=columns, show='headings',height=2,)
-
+    print(tree.location)
 
 
 
@@ -202,10 +226,11 @@ else:
 
 
 
-            item = tree.item(selected_item,)
+            item = tree.item(selected_item)
+
 
             record = item['values']
-
+            ite=record.copy()
             if arg ==2:
 
                 read = openfile.OpenFile()
