@@ -66,6 +66,13 @@ def callback(event):
 
 def call(event):
     if type(event.widget) == tkinter.ttk.Treeview:
+        m=Menu(root,tearoff=0)
+
+        m.add_command(label="Cut")
+        m.add_command(label="Copy")
+        m.add_command(label="Paste")
+        m.add_command(label="Reload")
+        mainloop()
         for selected_item in tree.selection():
             item = tree.item(selected_item)
 
