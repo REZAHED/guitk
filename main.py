@@ -43,7 +43,9 @@ def key(event):
     print("pressed", repr(event.char))
 
 def callback(event):
-    print(text_box_input.widgetName)
+
+
+
 
 
 
@@ -73,15 +75,18 @@ def cut():
     text_box_input.clipboard_append(text_box_input.selection_get())
     text_box_input.delete("1.0","end")
 
-def paste():
+def paste(event):
+    if str(event.widget).replace(".", "") == "text_2":
 
         text_box_output.insert("1.0",text_box_input.clipboard_get())
+    else:
+        text_box_input.insert("1.0", text_box_input.clipboard_get())
 def call(event):
     m = Menu(root, tearoff=0)
 
     m.add_command(label="Cut",command=cut)
     m.add_command(label="Copy")
-    m.add_command(label="Paste", command=paste)
+    m.add_command(label="Paste", command=lambda :paste(event))
     m.tk_popup(event.x_root, event.y_root)
 
 
@@ -102,6 +107,9 @@ def call(event):
 root.bind("<Key>", key)
 root.bind("<Button-1>", callback)
 root.bind("<Button-3>", call)
+
+
+
 root.resizable(False, False)
 root.geometry('800x600')
 
@@ -317,7 +325,7 @@ else:
 
     lbl_output = Label(root, text="перевод:", font=('muller', 12))
     lbl_output.grid(column=0, row=2, sticky='w', padx=20)
-    text_box_output = Text(root, width=25, height=1, selectbackground="blue", borderwidth=2)
+    text_box_output = Text(root, width=25, height=1, selectbackground="blue", borderwidth=2, name='text_2')
     text_box_output.grid(row=3, column=0, sticky='w', padx=20)
     text_box_output.config(font=('muller', 20, 'bold'), state='normal')
 
