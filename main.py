@@ -29,18 +29,23 @@ from tendo import singleton
 from tqdm import tk
 
 import openfile
+import test
 import write_to_file
 
 # os.environ["MKL_NUM_THREADS"] = "1"
 root = Tk()
 root.title('dictionary v.1.0')
 ite = []
+
 def key(event):
     if event.char =='п':
         print('hello')
     print("pressed", repr(event.char))
 
 def callback(event):
+    print(text_box_input.widgetName)
+
+
 
     item_selected('<<TreeviewSelect>>')
     # print(type(root.focus_get()))
@@ -63,16 +68,27 @@ def callback(event):
 
     print("clicked at", event.x, event.y)
 
+def cut():
+    text_box_input.clipboard_clear()
+    text_box_input.clipboard_append(text_box_input.selection_get())
+    text_box_input.delete("1.0","end")
 
+def paste():
+
+        text_box_output.insert("1.0",text_box_input.clipboard_get())
 def call(event):
-    if type(event.widget) == tkinter.ttk.Treeview:
-        m=Menu(root,tearoff=0)
+    m = Menu(root, tearoff=0)
 
-        m.add_command(label="Cut")
-        m.add_command(label="Copy")
-        m.add_command(label="Paste")
-        m.add_command(label="Reload")
-        mainloop()
+    m.add_command(label="Cut",command=cut)
+    m.add_command(label="Copy")
+    m.add_command(label="Paste", command=paste)
+    m.tk_popup(event.x_root, event.y_root)
+
+
+    if type(event.widget) == tkinter.ttk.Treeview:
+
+
+
         for selected_item in tree.selection():
             item = tree.item(selected_item)
 
@@ -295,7 +311,7 @@ else:
 
     lbl_input = Label(root, text="введите слово для поиска:", font=('muller', 12))
     lbl_input.grid(column=0, row=0, sticky='w', padx=20, pady=5)
-    text_box_input = Text(root, width=25, height=1, selectbackground="blue", borderwidth=2)
+    text_box_input = Text(root, width=25, height=1, selectbackground="blue", borderwidth=2, name='text_1',)
     text_box_input.grid(row=1, column=0, sticky='w', padx=20)
     text_box_input.config(font=('muller', 20, 'bold'))
 
@@ -354,6 +370,8 @@ else:
     tree.configure(yscroll=scrollbar.set)
     scrollbar.grid(row=5, column=5, sticky='ns')
     tree.column(column=0,minwidth=50, stretch=False)
+
+
 
     # procs = [p for p in psutil.process_iter() if 'main.exe' in p.name()]
     #
