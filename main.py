@@ -38,8 +38,7 @@ root.title('dictionary v.1.0')
 ite = []
 
 def key(event):
-    if event.char =='п':
-        print('hello')
+
     print("pressed", repr(event.char))
 
 def callback(event):
@@ -70,21 +69,35 @@ def callback(event):
 
     print("clicked at", event.x, event.y)
 
-def cut():
+def cut(event):
     text_box_input.clipboard_clear()
-    text_box_input.clipboard_append(text_box_input.selection_get())
-    text_box_input.delete("1.0","end")
+
+    if str(event.widget).replace(".", "") == "text_1":
+
+        text_box_input.clipboard_append(text_box_input.selection_get())
+        text_box_input.delete("1.0","end")
+    elif str(event.widget).replace(".", "") == "text_2":
+        text_box_output.clipboard_append(text_box_output.selection_get())
+        text_box_output.delete("1.0", "end")
 
 def paste(event):
     if str(event.widget).replace(".", "") == "text_2":
+        # print(text_box_output.get('sel.first', 'sel.last'))
 
-        text_box_output.insert("1.0",text_box_input.clipboard_get())
-    else:
+
+        if text_box_output.tag_ranges("sel"):
+
+            text_box_output.delete("1.0", "end")
+            text_box_output.insert("1.0", text_box_input.clipboard_get())
+        else:
+            text_box_output.insert("1.0",text_box_input.clipboard_get())
+    elif str(event.widget).replace(".", "") == "text_1":
+
         text_box_input.insert("1.0", text_box_input.clipboard_get())
 def call(event):
     m = Menu(root, tearoff=0)
 
-    m.add_command(label="Cut",command=cut)
+    m.add_command(label="Cut",command=lambda :cut(event))
     m.add_command(label="Copy")
     m.add_command(label="Paste", command=lambda :paste(event))
     m.tk_popup(event.x_root, event.y_root)
